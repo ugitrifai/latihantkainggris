@@ -3,1213 +3,458 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CBT TKA Bahasa Inggris - Paket 1</title>
+    <title>Aplikasi Tes Interaktif - Kelas 12</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        cbt: {
-                            blue: '#0056b3',
-                            header: '#1a365d',
-                            accent: '#3182ce',
-                            success: '#38a169',
-                            warning: '#dd6b20',
-                            danger: '#e53e3e',
-                            gray: '#edf2f7'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; user-select: none; }
-        .no-select { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for better visual feel */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
+<body class="bg-slate-100 min-h-screen text-slate-800 flex flex-col justify-between antialiased">
 
-    <!-- CBT Header -->
-    <header class="bg-cbt-header text-white px-4 py-3 shadow-md flex justify-between items-center sticky top-0 z-50">
-        <div class="flex items-center space-x-3">
-            <div class="bg-white text-cbt-header font-bold p-2 rounded text-lg tracking-wider">CBT</div>
-            <div>
-                <h1 class="font-bold text-base md:text-lg leading-tight">Ujian Tes Kemampuan Akademik (TKA)</h1>
-                <p class="text-xs text-blue-200">Mata Pelajaran: Bahasa Inggris - Paket 1</p>
+    <!-- Top Header -->
+    <header class="bg-indigo-600 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/20 p-2 rounded-lg">
+                    <i class="fa-solid fa-graduation-cap text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-base sm:text-lg leading-tight">Ujian Online Interaktif</h1>
+                    <p class="text-xs text-indigo-200">Sistem Evaluasi Pembelajaran</p>
+                </div>
             </div>
-        </div>
-        <div class="flex items-center space-x-4">
-            <!-- Timer -->
-            <div class="bg-blue-900 px-3 py-1.5 rounded border border-blue-400 text-center">
-                <div class="text-[10px] uppercase text-blue-200 tracking-wider">Sisa Waktu</div>
-                <div id="timer" class="font-mono font-bold text-lg text-yellow-300">03:00:00</div>
-            </div>
-            <!-- Font Resize Controls -->
-            <div class="hidden md:flex items-center space-x-1 bg-blue-800 p-1 rounded">
-                <button onclick="changeFontSize(-1)" class="px-2 py-0.5 bg-blue-700 hover:bg-blue-600 rounded text-xs font-bold" title="Kecilkan Teks">A-</button>
-                <button onclick="changeFontSize(0)" class="px-2 py-0.5 bg-blue-700 hover:bg-blue-600 rounded text-xs font-bold" title="Ukuran Normal">A</button>
-                <button onclick="changeFontSize(1)" class="px-2 py-0.5 bg-blue-700 hover:bg-blue-600 rounded text-xs font-bold" title="Besarkan Teks">A+</button>
+            
+            <!-- Student Profile Badge (Hidden on Login Screen) -->
+            <div id="student-badge" class="hidden flex items-center space-x-2 bg-indigo-700/80 px-3 py-1.5 rounded-full border border-indigo-400/30">
+                <i class="fa-solid fa-user-circle text-indigo-200 text-lg"></i>
+                <div class="text-left text-xs sm:text-sm">
+                    <span id="display-name" class="font-semibold block truncate max-w-[120px] sm:max-w-[200px]">-</span>
+                    <span id="display-class" class="text-indigo-200 text-[11px] block">-</span>
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- Main CBT Body -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-2 md:p-4 grid grid-cols-1 lg:grid-cols-4 gap-4">
+    <!-- Main Content Container -->
+    <main class="flex-grow flex items-center justify-center p-3 sm:p-6">
+        <div class="w-full max-w-3xl">
 
-        <!-- Question Panel (3 cols on large screen) -->
-        <section class="lg:col-span-3 flex flex-col bg-white rounded-lg shadow border border-gray-200 min-h-[500px]">
-            <!-- Top Controls bar -->
-            <div class="bg-gray-50 p-3 border-b border-gray-200 flex justify-between items-center rounded-t-lg">
-                <span class="font-bold text-gray-700 text-lg">Soal Nomor <span id="q-number" class="text-cbt-accent text-xl">1</span></span>
-                <label class="flex items-center space-x-2 cursor-pointer bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-3 py-1 rounded border border-yellow-300 transition text-sm font-semibold">
-                    <input type="checkbox" id="flag-checkbox" class="w-4 h-4 text-yellow-600 rounded focus:ring-yellow-500" onchange="toggleFlag()">
-                    <span>Ragu-Ragu</span>
-                </label>
-            </div>
-
-            <!-- Question & Passages Content Container -->
-            <div id="question-container" class="p-4 md:p-6 flex-1 overflow-y-auto max-h-[65vh] text-base leading-relaxed">
-                <!-- Content injected dynamically via JS -->
-            </div>
-
-            <!-- Bottom Action Navigation -->
-            <div class="bg-gray-50 p-3 border-t border-gray-200 flex justify-between items-center rounded-b-lg">
-                <button id="btn-prev" onclick="navigate(-1)" class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded shadow transition flex items-center space-x-1 disabled:opacity-50">
-                    <span>&larr; SOAL SEBELUMNYA</span>
-                </button>
-                <button id="btn-next" onclick="navigate(1)" class="px-4 py-2 bg-cbt-accent hover:bg-blue-600 text-white font-semibold rounded shadow transition flex items-center space-x-1">
-                    <span>SOAL BERIKUTNYA &rarr;</span>
-                </button>
-                <button id="btn-finish" onclick="confirmFinish()" class="hidden px-5 py-2 bg-green-600 hover:bg-green-700 text-white font-bold rounded shadow transition">
-                    SELESAI UJIAN
-                </button>
-            </div>
-        </section>
-
-        <!-- Navigation Drawer / Sidebar (1 col on large screen) -->
-        <aside class="bg-white rounded-lg shadow border border-gray-200 p-4 flex flex-col justify-between">
-            <div>
-                <h2 class="font-bold text-gray-700 border-b pb-2 mb-3 text-center uppercase tracking-wide text-sm">Navigasi Soal</h2>
-                
-                <!-- Status Legend -->
-                <div class="grid grid-cols-3 gap-1 mb-4 text-[11px] text-center">
-                    <div class="p-1 bg-green-600 text-white rounded font-medium">Sudah</div>
-                    <div class="p-1 bg-yellow-400 text-gray-900 rounded font-medium">Ragu</div>
-                    <div class="p-1 bg-white border border-gray-300 text-gray-700 rounded font-medium">Belum</div>
+            <!-- 1. LOGIN / ENTRY FORM SECTION -->
+            <div id="login-section" class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 border border-slate-200/80 transition-all">
+                <div class="text-center mb-6">
+                    <div class="inline-flex justify-center items-center w-16 h-16 bg-indigo-100 text-indigo-600 rounded-full mb-3">
+                        <i class="fa-solid fa-user-pen text-2xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800">Selamat Datang!</h2>
+                    <p class="text-sm text-slate-500 mt-1">Silakan masukkan nama lengkap dan pilih kelas Anda untuk memulai tes.</p>
                 </div>
 
-                <!-- Number Grid -->
-                <div id="number-grid" class="grid grid-cols-5 gap-2 max-h-[320px] overflow-y-auto p-1">
-                    <!-- Buttons generated dynamically -->
+                <form id="login-form" onsubmit="handleLogin(event)" class="space-y-5">
+                    <!-- Name Input -->
+                    <div>
+                        <label for="student-name" class="block text-sm font-semibold text-slate-700 mb-1.5">Nama Lengkap</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                                <i class="fa-regular fa-user"></i>
+                            </span>
+                            <input type="text" id="student-name" required placeholder="Masukkan nama lengkap Anda..." 
+                                class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition-all outline-none">
+                        </div>
+                    </div>
+
+                    <!-- Class Select Input -->
+                    <div>
+                        <label for="student-class" class="block text-sm font-semibold text-slate-700 mb-1.5">Pilih Kelas</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+                                <i class="fa-solid fa-users-rectangle"></i>
+                            </span>
+                            <select id="student-class" required 
+                                class="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm transition-all outline-none appearance-none cursor-pointer">
+                                <option value="" disabled selected>-- Pilih Kelas --</option>
+                                <option value="12.F1">12.F1</option>
+                                <option value="12.F2">12.F2</option>
+                                <option value="12.F3">12.F3</option>
+                                <option value="12.F4">12.F4</option>
+                                <option value="12.F5">12.F5</option>
+                                <option value="12.F6">12.F6</option>
+                                <option value="12.F7">12.F7</option>
+                                <option value="12.F8">12.F8</option>
+                                <option value="12.F9">12.F9</option>
+                                <option value="12.F10">12.F10</option>
+                            </select>
+                            <span class="absolute inset-y-0 right-0 flex items-center pr-3.5 pointer-events-none text-slate-400">
+                                <i class="fa-solid fa-chevron-down text-xs"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Error Alert -->
+                    <div id="login-error" class="hidden p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-xs flex items-center gap-2">
+                        <i class="fa-solid fa-circle-exclamation text-base"></i>
+                        <span>Mohon isi nama lengkap dan pilih kelas terlebih dahulu.</span>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold py-3 px-4 rounded-xl shadow-md hover:shadow-indigo-200 transition-all flex justify-center items-center space-x-2">
+                        <span>Mulai Tes</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- 2. QUIZ / TEST SECTION (Hidden initially) -->
+            <div id="quiz-section" class="hidden space-y-4">
+                <!-- Progress & Timer Bar -->
+                <div class="bg-white rounded-xl shadow-sm p-4 border border-slate-200 flex flex-wrap justify-between items-center gap-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Soal</span>
+                        <span id="current-question-num" class="text-sm font-bold bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full">1 / 5</span>
+                    </div>
+                    
+                    <!-- Progress Bar -->
+                    <div class="flex-grow max-w-xs mx-2">
+                        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                            <div id="progress-bar" class="bg-indigo-600 h-full w-0 transition-all duration-300"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center text-slate-600 font-mono font-semibold text-sm bg-slate-100 px-3 py-1 rounded-lg">
+                        <i class="fa-regular fa-clock mr-2 text-indigo-600"></i>
+                        <span id="timer-display">15:00</span>
+                    </div>
+                </div>
+
+                <!-- Question Box -->
+                <div class="bg-white rounded-2xl shadow-lg p-5 sm:p-7 border border-slate-200">
+                    <h3 id="question-text" class="text-base sm:text-lg font-semibold text-slate-800 mb-6 leading-relaxed">
+                        Loading soal...
+                    </h3>
+
+                    <!-- Answer Options -->
+                    <div id="options-container" class="space-y-3">
+                        <!-- Options generated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="flex justify-between items-center pt-2">
+                    <button id="btn-prev" onclick="navigateQuestion(-1)" class="px-4 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-700 font-medium text-sm hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm transition-all flex items-center space-x-2">
+                        <i class="fa-solid fa-arrow-left text-xs"></i>
+                        <span>Sebelumnya</span>
+                    </button>
+
+                    <button id="btn-next" onclick="navigateQuestion(1)" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm shadow-md transition-all flex items-center space-x-2">
+                        <span id="btn-next-text">Selanjutnya</span>
+                        <i id="btn-next-icon" class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
                 </div>
             </div>
 
-            <div class="mt-6 pt-3 border-t border-gray-200">
-                <button onclick="confirmFinish()" class="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded shadow text-sm uppercase tracking-wide transition">
-                    Hentikan / Selesai Ujian
+            <!-- 3. RESULT SECTION (Hidden initially) -->
+            <div id="result-section" class="hidden bg-white rounded-2xl shadow-xl p-6 sm:p-8 border border-slate-200 text-center space-y-6">
+                <div class="inline-flex justify-center items-center w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full">
+                    <i class="fa-solid fa-trophy text-3xl"></i>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">Tes Selesai!</h2>
+                    <p class="text-slate-500 text-sm mt-1">Terima kasih telah menyelesaikan seluruh soal.</p>
+                </div>
+
+                <!-- Score Board -->
+                <div class="bg-slate-50 rounded-xl p-5 border border-slate-200 max-w-sm mx-auto space-y-3">
+                    <div class="border-b border-slate-200 pb-3">
+                        <p id="result-student-name" class="font-bold text-slate-800 text-base">Nama Siswa</p>
+                        <p id="result-student-class" class="text-xs text-slate-500">Kelas</p>
+                    </div>
+
+                    <div class="pt-1">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Skor Akhir</span>
+                        <div id="final-score" class="text-4xl font-extrabold text-indigo-600 mt-1">0</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 text-xs pt-3 border-t border-slate-200">
+                        <div class="bg-emerald-50 text-emerald-700 p-2 rounded-lg font-medium">
+                            Benar: <span id="correct-count" class="font-bold">0</span>
+                        </div>
+                        <div class="bg-red-50 text-red-700 p-2 rounded-lg font-medium">
+                            Salah: <span id="wrong-count" class="font-bold">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="restartQuiz()" class="inline-flex items-center space-x-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-md transition-all">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>Kerjakan Ulang</span>
                 </button>
             </div>
-        </aside>
+
+        </div>
     </main>
 
-    <!-- Modal Confirmation Finish -->
-    <div id="finish-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-lg p-6 max-w-md w-full shadow-2xl">
-            <h3 class="text-xl font-bold text-gray-800 mb-2">Konfirmasi Selesai Ujian</h3>
-            <p class="text-gray-600 text-sm mb-4">Apakah Anda yakin ingin menyelesaikan ujian ini? Pastikan seluruh soal telah diperiksa kembali.</p>
-            <div id="modal-summary" class="bg-blue-50 p-3 rounded mb-4 text-xs space-y-1 text-blue-900"></div>
-            <div class="flex justify-end space-x-3">
-                <button onclick="closeModal()" class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 text-sm font-semibold rounded">Batal</button>
-                <button onclick="calculateAndShowResult()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded">Ya, Selesaikan</button>
-            </div>
-        </div>
-    </div>
+    <!-- Clean Footer (No extra clutter or unwanted text) -->
+    <footer class="bg-white border-t border-slate-200 py-3 text-center text-xs text-slate-400">
+        <p>&copy; 2026 Portal Evaluasi Pembelajaran. Seluruh hak cipta dilindungi.</p>
+    </footer>
 
-    <!-- Modal Score Result Analysis -->
-    <div id="result-modal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50 p-4 overflow-y-auto">
-        <div class="bg-white rounded-lg p-6 max-w-2xl w-full shadow-2xl my-8">
-            <div class="text-center border-b pb-4 mb-4">
-                <h2 class="text-2xl font-bold text-cbt-header">Hasil Ujian CBT TKA Bahasa Inggris</h2>
-                <p class="text-sm text-gray-500">Laporan Hasil Kerja Peserta</p>
-            </div>
-
-            <div class="grid grid-cols-3 gap-4 text-center mb-6">
-                <div class="bg-blue-50 p-3 rounded border border-blue-200">
-                    <div class="text-xs text-blue-600 font-semibold uppercase">Total Skor</div>
-                    <div id="score-val" class="text-3xl font-extrabold text-blue-800">0</div>
-                </div>
-                <div class="bg-green-50 p-3 rounded border border-green-200">
-                    <div class="text-xs text-green-600 font-semibold uppercase">Jawaban Benar</div>
-                    <div id="correct-count" class="text-3xl font-extrabold text-green-700">0</div>
-                </div>
-                <div class="bg-red-50 p-3 rounded border border-red-200">
-                    <div class="text-xs text-red-600 font-semibold uppercase">Jawaban Salah</div>
-                    <div id="wrong-count" class="text-3xl font-extrabold text-red-700">0</div>
-                </div>
-            </div>
-
-            <div class="space-y-3 mb-6">
-                <h3 class="font-bold text-gray-700 border-b pb-1">Detail Analisis Per Soal:</h3>
-                <div id="result-details" class="max-h-60 overflow-y-auto border rounded divide-y text-sm">
-                    <!-- Detailed result rows -->
-                </div>
-            </div>
-
-            <div class="text-center">
-                <button onclick="location.reload()" class="px-6 py-2.5 bg-cbt-accent hover:bg-blue-700 text-white font-bold rounded shadow">
-                    Ulangi Ujian
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Script Application Logic -->
     <script>
-        // Inline Question Bank extracted from the PDF
-        const questionsData = [
+        // Quiz Data Bank
+        const sampleQuestions = [
             {
-                id: 1,
-                type: 'mcq',
-                passage: `<b>Why Passion Projects Are Transforming Student Learning</b><br>
-                In recent years, Indonesian students have increasingly engaged in "passion projects"—self-initiated activities outside the classroom that combine personal interests with social contribution. From digital art campaigns to climate action clubs, these projects have empowered youth to explore their identities while addressing real-world problems. According to a 2024 study by the National Youth Council, 67% of senior high school students reported feeling more motivated in school when their personal interests were acknowledged.<br><br>
-                Despite some challenges—such as time management and lack of school support—many students persist. "My community gardening project helped me connect science with service," said Nadira, a Grade 11 student in Yogyakarta. "It changed how I think about learning." The rise of such initiatives suggests a broader shift toward student agency and project-based learning.`,
-                image: `<div class="my-4 p-3 bg-white border rounded shadow-sm text-center">
-                    <h4 class="text-xs font-bold text-gray-700 mb-2">Student Motivation by Passion Project Type</h4>
-                    <svg viewBox="0 0 500 220" class="w-full max-w-md mx-auto">
-                        <!-- Y-axis lines -->
-                        <line x1="40" y1="20" x2="40" y2="180" stroke="#cbd5e1" stroke-width="1.5"/>
-                        <line x1="40" y1="180" x2="480" y2="180" stroke="#475569" stroke-width="1.5"/>
-                        <text x="10" y="25" class="text-[10px]" fill="#64748b">80%</text>
-                        <line x1="35" y1="20" x2="480" y2="20" stroke="#f1f5f9" stroke-width="1"/>
-                        <text x="10" y="65" class="text-[10px]" fill="#64748b">60%</text>
-                        <line x1="35" y1="60" x2="480" y2="60" stroke="#f1f5f9" stroke-width="1"/>
-                        <text x="10" y="105" class="text-[10px]" fill="#64748b">40%</text>
-                        <line x1="35" y1="100" x2="480" y2="100" stroke="#f1f5f9" stroke-width="1"/>
-                        <text x="10" y="145" class="text-[10px]" fill="#64748b">20%</text>
-                        <line x1="35" y1="140" x2="480" y2="140" stroke="#f1f5f9" stroke-width="1"/>
-                        <!-- Bars -->
-                        <rect x="65" y="40" width="70" height="140" fill="#94a3b8"/>
-                        <text x="100" y="32" font-size="11" font-weight="bold" text-anchor="middle" fill="#334155">70%</text>
-                        <text x="100" y="195" font-size="10" text-anchor="middle" fill="#475569">Art-based</text>
-
-                        <rect x="175" y="44" width="70" height="136" fill="#cbd5e1"/>
-                        <text x="210" y="36" font-size="11" font-weight="bold" text-anchor="middle" fill="#334155">68%</text>
-                        <text x="210" y="195" font-size="10" text-anchor="middle" fill="#475569">Science-based</text>
-
-                        <rect x="285" y="50" width="70" height="130" fill="#64748b"/>
-                        <text x="320" y="42" font-size="11" font-weight="bold" text-anchor="middle" fill="#334155">65%</text>
-                        <text x="320" y="195" font-size="10" text-anchor="middle" fill="#475569">Social action</text>
-
-                        <rect x="395" y="60" width="70" height="120" fill="#475569"/>
-                        <text x="430" y="52" font-size="11" font-weight="bold" text-anchor="middle" fill="#334155">60%</text>
-                        <text x="430" y="195" font-size="10" text-anchor="middle" fill="#475569">Tech-based</text>
-                    </svg>
-                </div>`,
-                question: "What is the main idea of the passage?",
+                question: "Manakah pernyataan yang paling tepat mengenai fungsi jaringan komputer dalam pembelajaran digital?",
                 options: [
-                    "A. Students face challenges managing time for school projects.",
-                    "B. Passion projects are increasing stress among Indonesian youth.",
-                    "C. Schools are pressuring students to participate in extracurriculars.",
-                    "D. Passion projects help students combine interests with social impact.",
-                    "E. Science-based projects are more popular than art-based projects."
+                    "Memungkinkan pertukaran data dan komunikasi antar perangkat secara cepat",
+                    "Menghapus kebutuhan akan perangkat keras komputer",
+                    "Hanya digunakan untuk mengakses media sosial",
+                    "Membuat sistem komputer bekerja tanpa arus listrik"
                 ],
-                answer: "D"
+                answer: 0
             },
             {
-                id: 2,
-                type: 'mcq',
-                passage: "Refer to the text and chart in Question 1.",
-                question: "Based on the passage and the figure, what can be inferred about student motivation and tone?",
+                question: "Dalam metode berfikir komputasional, proses memecahkan masalah besar menjadi bagian-bagian yang lebih kecil disebut...",
                 options: [
-                    "A. The author uses a pessimistic tone to describe the limits of passion projects.",
-                    "B. Passion projects are portrayed as a burden for students with academic stress.",
-                    "C. The tone is hopeful, showing that passion projects enhance student engagement.",
-                    "D. The author neutrally presents data without expressing any opinion.",
-                    "E. Students are motivated equally by all types of projects."
+                    "Abstraksi",
+                    "Dekomposisi",
+                    "Pengenalan Pola",
+                    "Algoritma"
                 ],
-                answer: "C"
+                answer: 1
             },
             {
-                id: 3,
-                type: 'mcq',
-                passage: "Refer to the text in Question 1.",
-                question: "What is the writer's opinion about passion projects, and which sentence best supports it?",
+                question: "Perangkat lunak yang berfungsi untuk mengelola sumber daya sistem dan menyediakan layanan bagi aplikasi komputer adalah...",
                 options: [
-                    "A. Passion projects are a waste of academic time; \"students face time management issues.\"",
-                    "B. They are transforming learning; \"these projects have empowered youth.\"",
-                    "C. They help schools control student behaviour; \"schools now demand more.\"",
-                    "D. Students enjoy gardening; \"My community gardening project helped me...\"",
-                    "E. Passion projects are only popular in urban areas."
+                    "Browser Web",
+                    "Sistem Operasi",
+                    "Aplikasi Pengolah Kata",
+                    "Antivirus"
                 ],
-                answer: "B"
+                answer: 1
             },
             {
-                id: 4,
-                type: 'mcq',
-                passage: `<b>Transcript from a Role-Play at a Youth Leadership Workshop</b><br>
-                <b>Facilitator:</b> In a friendly debate, remember that non-verbal communication is as important as what you say. For example, if someone crosses their arms and avoids eye contact, how might you feel?<br>
-                <b>Student A:</b> Probably that they're annoyed or not interested.<br>
-                <b>Facilitator:</b> Exactly. Now think of tone. Saying "Fine!" with a harsh pitch sounds different from "Fine..." with a sigh.<br>
-                <b>Student B:</b> It's not just what we say—how we say it and our body language matter too.<br>
-                <b>Facilitator:</b> Yes! Good communicators use gestures, facial expressions, and voice tone...`,
-                question: "Why are non-verbal cues important in spoken communication?",
+                question: "Protokol standar yang digunakan untuk mengirimkan halaman web di internet secara aman adalah...",
                 options: [
-                    "A. They help speakers deliver long speeches effectively.",
-                    "B. They can replace words in formal presentations.",
-                    "C. They confuse the listener if not used often.",
-                    "D. They provide extra meaning beyond words.",
-                    "E. They are only necessary for professional settings."
+                    "HTTP",
+                    "FTP",
+                    "HTTPS",
+                    "SMTP"
                 ],
-                answer: "D"
+                answer: 2
             },
             {
-                id: 5,
-                type: 'mcq',
-                passage: "Refer to the workshop transcript in Question 4.",
-                question: "During the workshop, a peer shares an idea and looks uncertain. Which is the most appropriate response to sustain a friendly conversation?",
+                question: "Elemen dasar dalam algoritma pemograman yang digunakan untuk menyimpan nilai data yang dapat berubah-ubah disebut...",
                 options: [
-                    "A. \"That doesn't make sense. You should rethink it.\"",
-                    "B. \"Interesting, but I completely disagree.\"",
-                    "C. Smiles and says, \"Thanks for sharing. Can you tell me more?\"",
-                    "D. \"Whatever. Let's move on.\"",
-                    "E. Says nothing and checks phone."
+                    "Variabel",
+                    "Konstanta",
+                    "Fungsi",
+                    "Loop"
                 ],
-                answer: "C"
-            },
-            {
-                id: 6,
-                type: 'mcq',
-                passage: `<b>Instagram Post by Arif (Grade 12)</b><br>
-                "It's not always easy ending a conversation with a teacher, especially when they're mid-sentence! Last Friday, I had to catch my school bus, but Mr. Darmawan was still giving me tips for my speech. I smiled, nodded, and said, 'Thank you so much, Sir. I'll definitely think about it—may I continue this with you after school?' It worked. He smiled and said we could talk again later. I realized that polite but clear signals help both people."<br><br>
-                <b>Transcript of Student Dialogue</b><br>
-                <b>A:</b> "So, we've agreed that the school cafeteria needs healthier options, right?"<br>
-                <b>B:</b> "Yes, but I wonder, how can we convince students who prefer fried food?"<br>
-                <b>A:</b> "Good question. What if we surveyed their preferences first and offered alternatives?"<br>
-                <b>B:</b> "That sounds fair. And maybe get opinions from parents too?"<br>
-                <b>A:</b> "Nice! Do you think parents would support a price increase for healthier meals?"<br>
-                <b>B:</b> "Hmm, let's ask that during our presentation."`,
-                question: "What is the most effective strategy for closing a casual conversation with a teacher based on Arif's blog post?",
-                options: [
-                    "A. Say nothing and walk away if the teacher keeps talking.",
-                    "B. Look away and pretend to be busy.",
-                    "C. Say \"Sorry, I'm late!\" and leave immediately.",
-                    "D. Acknowledge the teacher's point and suggest continuing later.",
-                    "E. Tell the teacher you are not interested in continuing the discussion."
-                ],
-                answer: "D"
-            },
-            {
-                id: 7,
-                type: 'mcq',
-                passage: "Refer to the dialogue transcript in Question 6.",
-                question: "Which statement in the dialogue is an example of an open-ended question?",
-                options: [
-                    "A. \"We've agreed that the school cafeteria needs healthier options, right?\"",
-                    "B. \"Do you think parents would support a price increase for healthier meals?\"",
-                    "C. \"Can we convince students who prefer fried food?\"",
-                    "D. \"What if we surveyed their preferences first?\"",
-                    "E. \"That sounds fair.\""
-                ],
-                answer: "D"
-            },
-            {
-                id: 8,
-                type: 'mcq',
-                passage: "Suppose the dialogue in Question 6 continues with Student A saying: \"I think we need to understand that not every family can afford expensive meals.\"",
-                question: "What makes this opinion culturally sensitive?",
-                options: [
-                    "A. It criticizes the school for ignoring parents.",
-                    "B. It reflects personal bias without evidence.",
-                    "C. It recognizes differences in economic background respectfully.",
-                    "D. It shows disagreement in a rude way.",
-                    "E. It supports government regulation of school lunches."
-                ],
-                answer: "C"
-            },
-            {
-                id: 9,
-                type: 'mcq',
-                passage: `<b>Teen Mental Health in Indonesia</b><br>
-                Teenagers today face multiple stressors, from academic pressure to social media comparisons. While mental health is often discussed online, many teens feel isolated when struggling in real life. Experts recommend schools create supportive environments, including peer support groups and trained counsellors. Increasing mental health awareness can reduce stigma and encourage students to speak up. A survey revealed the following data:`,
-                image: `<div class="my-4 p-3 bg-white border rounded shadow-sm text-center">
-                    <h4 class="text-xs font-bold text-gray-700 mb-2">Teen Mental Health in Indonesia (2024)</h4>
-                    <svg viewBox="0 0 500 200" class="w-full max-w-md mx-auto">
-                        <!-- Horizontal chart -->
-                        <line x1="180" y1="10" x2="180" y2="160" stroke="#475569" stroke-width="1.5"/>
-                        <line x1="180" y1="160" x2="480" y2="160" stroke="#475569" stroke-width="1.5"/>
-                        
-                        <text x="170" y="30" font-size="9" text-anchor="end" fill="#334155">Want schools to provide mental health ed.</text>
-                        <rect x="180" y="15" width="210" height="22" fill="#64748b"/>
-                        <text x="398" y="30" font-size="10" font-weight="bold" fill="#1e293b">70%</text>
-
-                        <text x="170" y="65" font-size="9" text-anchor="end" fill="#334155">Feel comfortable speaking to adults</text>
-                        <rect x="180" y="50" width="87" height="22" fill="#cbd5e1"/>
-                        <text x="273" y="65" font-size="10" font-weight="bold" fill="#1e293b">29%</text>
-
-                        <text x="170" y="100" font-size="9" text-anchor="end" fill="#334155">Say social media affects mood</text>
-                        <rect x="180" y="85" width="138" height="22" fill="#94a3b8"/>
-                        <text x="324" y="100" font-size="10" font-weight="bold" fill="#1e293b">46%</text>
-
-                        <text x="170" y="135" font-size="9" text-anchor="end" fill="#334155">Teens reporting regular anxiety</text>
-                        <rect x="180" y="120" width="99" height="22" fill="#64748b"/>
-                        <text x="285" y="135" font-size="10" font-weight="bold" fill="#1e293b">33%</text>
-
-                        <!-- X Axis ticks -->
-                        <text x="180" y="175" font-size="9" text-anchor="middle" fill="#64748b">0%</text>
-                        <text x="240" y="175" font-size="9" text-anchor="middle" fill="#64748b">20%</text>
-                        <text x="300" y="175" font-size="9" text-anchor="middle" fill="#64748b">40%</text>
-                        <text x="360" y="175" font-size="9" text-anchor="middle" fill="#64748b">60%</text>
-                        <text x="420" y="175" font-size="9" text-anchor="middle" fill="#64748b">80%</text>
-                        <text x="480" y="175" font-size="9" text-anchor="middle" fill="#64748b">100%</text>
-                    </svg>
-                </div>`,
-                question: "What is the main idea of the informative text?",
-                options: [
-                    "A. Social media should be banned in schools.",
-                    "B. Students do not care about their mental health.",
-                    "C. Schools must play a role in supporting teen mental health.",
-                    "D. Teens should rely only on their families for mental health help.",
-                    "E. Peer groups are more important than counsellors."
-                ],
-                answer: "C"
-            },
-            {
-                id: 10,
-                type: 'mcq',
-                passage: "Refer to the text in Question 9.",
-                question: "What is the primary purpose of the informative text?",
-                options: [
-                    "A. To persuade teens to avoid social media completely",
-                    "B. To inform the public about the causes of teenage anxiety",
-                    "C. To entertain the reader with teen stories",
-                    "D. To inform readers about mental health challenges and suggest school-based solutions",
-                    "E. To argue against using counsellors in schools"
-                ],
-                answer: "D"
-            },
-            {
-                id: 11,
-                type: 'mcq',
-                passage: `<b>Why Public Speaking Is Not Just a Soft Skill</b><br>
-                In today's hyper-connected world, the ability to speak publicly is more than a bonus—it's a necessity. Schools that treat it as optional undermine students' capacity to lead, persuade, and participate in civic life. A 2023 study published by the Southeast Asian Education Review found that graduates who had formal training in public speaking were 36% more likely to secure leadership roles within five years.<br><br>
-                Still, critics argue that not all students are naturally outgoing. But confidence isn't a prerequisite—it's a product of practice. When institutions avoid discomfort to preserve short-term ease, they sacrifice students' long-term resilience. Public speaking builds composure, logical structuring of ideas, and the courage to fail forward. This is not merely an extracurricular activity—it is a cornerstone of future readiness.`,
-                question: "Which sentence most strongly reinforces the author's main argument that public speaking should be integral to education?",
-                options: [
-                    "A. \"Public speaking builds composure, logical structuring of ideas, and the courage to fail forward.\"",
-                    "B. \"Still, critics argue that not all students are naturally outgoing.\"",
-                    "C. \"Confidence isn't a prerequisite—it's a product of practice.\"",
-                    "D. \"When institutions avoid discomfort to preserve short-term ease...\"",
-                    "E. \"Schools that treat it as optional undermine students' capacity to lead, persuade, and participate in civic life.\""
-                ],
-                answer: "E"
-            },
-            {
-                id: 12,
-                type: 'mcq',
-                passage: "Refer to the text in Question 11.",
-                question: "Which sentence most directly reveals the author's evaluative stance on current school practices?",
-                options: [
-                    "A. \"Confidence isn't a prerequisite—it's a product of practice.\"",
-                    "B. \"This is not merely an extracurricular activity—it is a cornerstone of future readiness.\"",
-                    "C. \"Public speaking builds composure, logical structuring of ideas, and the courage to fail forward.\"",
-                    "D. \"Still, critics argue that not all students are naturally outgoing.\"",
-                    "E. \"Schools that treat it as optional undermine students' capacity...\""
-                ],
-                answer: "E"
-            },
-            {
-                id: 13,
-                type: 'mcq',
-                passage: "Your school wants to launch a new digital orientation guide for incoming students. The goal is to clearly explain how to download, log in, and navigate the official student mobile app, which includes class schedules, assignments, and a live school announcement board. You are tasked with drafting the content that will appear on the app's welcome screen.",
-                question: "Given the context and user needs, which of the following would be the most effective and inclusive text type for the onboarding module?",
-                options: [
-                    "A. A first-person blog describing a student's day using the app, focusing on their experiences.",
-                    "B. A persuasive essay arguing that school apps reduce stress and improve learning.",
-                    "C. A bullet-pointed user manual embedded with screenshots and interactive tips.",
-                    "D. A news article about the app's development process, featuring teacher interviews.",
-                    "E. A short fictional story showing two students learning to use the app incorrectly, followed by corrections."
-                ],
-                answer: "C"
-            },
-            {
-                id: 14,
-                type: 'mcq',
-                passage: `<b>The Clockmaker's Apprentice</b><br>
-                In the city of Aeromar, time was not measured by the sun but by the Sky Clock—a floating orb above the Council Tower that pulsed with blue light. Only the High Clockmaker and his apprentice could repair it.<br><br>
-                When the Sky Clock dimmed unexpectedly one evening, panic spread like wildfire. People stumbled through frozen minutes, unsure if it was morning or midnight.<br><br>
-                Inside the Tower, Niko, the apprentice, examined the gears with trembling hands. The High Clockmaker was away in the Northern Isles, unreachable by wind messenger. Niko had trained for five years but had never touched the Core Gear.<br><br>
-                As thunder cracked across the skies, he removed the protective seal and whispered, "Forgive me, Master." He inserted the tool he was never meant to use alone. A blinding flash of light swallowed the chamber.<br><br>
-                When it faded, the orb above the tower beat once more bright and steady. Niko stood quietly, one hand on the restored gear, the other clutching a small, charred feather that hadn't been there before.`,
-                question: "Read the fictional short story excerpt above. What is the most likely motive behind Niko's decision to activate the Core Gear despite the risk?",
-                options: [
-                    "A. He wanted to prove he was more skilled than the High Clockmaker.",
-                    "B. He believed the Sky Clock would permanently collapse if he did nothing.",
-                    "C. He wanted the Council to reward him with the title of High Clockmaker.",
-                    "D. He had secretly damaged the Sky Clock and wanted to fix his mistake.",
-                    "E. He had received instructions through the feather from a magical creature."
-                ],
-                answer: "B"
-            },
-            {
-                id: 15,
-                type: 'mcq',
-                passage: "Study the digital poster advertisement provided below.",
-                image: `<div class="my-4 p-4 bg-gray-800 text-white rounded-lg max-w-xs mx-auto text-center border-2 border-gray-600 shadow-xl">
-                    <div class="flex justify-between text-[10px] text-gray-300 mb-2">
-                        <span class="border border-white/40 px-1 rounded">"YOU'RE OVERREACTING!"</span>
-                        <span class="border border-white/40 px-1 rounded">"STOP BEING DRAMATIC"</span>
-                    </div>
-                    <div class="bg-gray-700 py-2 rounded mb-3 border border-gray-500">
-                        <div class="text-xs uppercase tracking-widest text-gray-300">"JUST SMILE"</div>
-                    </div>
-                    <div class="my-3 py-2 border-y border-yellow-400">
-                        <p class="font-black text-lg text-yellow-300 tracking-wide leading-tight">NOT ALL WOUNDS ARE VISIBLE.</p>
-                        <p class="font-extrabold text-xl tracking-wider text-white">YOU MATTER.</p>
-                        <p class="text-xs text-yellow-400 mt-1 font-mono">#OpenUp</p>
-                    </div>
-                    <div class="bg-white text-gray-900 p-2 rounded text-left text-[11px] font-semibold flex justify-between items-center my-3">
-                        <div>
-                            <p>FREE MENTAL HEALTH CHECK-INS.</p>
-                            <p class="text-blue-700">PRIVATE. SUPPORTIVE. REAL.</p>
-                        </div>
-                        <div class="bg-gray-900 text-white p-1 text-[8px] font-mono text-center">QR CODE</div>
-                    </div>
-                    <p class="text-[9px] uppercase tracking-widest text-gray-400">Teenage Mental Health App</p>
-                </div>`,
-                question: "What is the most deeply implied message of the advertisement?",
-                options: [
-                    "A. Peer advice often solves mental health issues.",
-                    "B. Smiling is a sign that someone is emotionally healthy.",
-                    "C. Mental health apps should be colourful to attract teenagers.",
-                    "D. Social pressure can silence emotional struggles, but safe spaces help.",
-                    "E. Teenagers often exaggerate emotional problems for attention."
-                ],
-                answer: "D"
-            },
-            {
-                id: 16,
-                type: 'mcq',
-                passage: `<b>Benefits of Physical Exercise for Teenagers</b><br>
-                A national survey conducted in 2023 by the Indonesian Health Youth Forum revealed that teenagers who engage in physical activity for at least 45 minutes per day are 25% more likely to report lower stress levels and better sleep quality. Moreover, schools that incorporate movement breaks during classes have seen a 12% increase in student concentration and a decline in behavioural disruptions. These findings support the call for schools and families to prioritize structured and unstructured physical activity for adolescents.`,
-                question: "Which of the following sentences would be the most suitable topic sentence for a paragraph that introduces the importance of exercise for teenagers?",
-                options: [
-                    "A. Many students today feel overwhelmed by school pressures.",
-                    "B. Physical activity helps people of all ages stay healthy and productive.",
-                    "C. Including daily exercise in a teenager's routine can lead to improved mental, physical, and academic outcomes.",
-                    "D. Schools are beginning to introduce exercise programs to combat obesity.",
-                    "E. Adolescents should avoid too much screen time after school."
-                ],
-                answer: "C"
-            },
-            {
-                id: 17,
-                type: 'mcq',
-                passage: "",
-                question: "Which verb tense best fits the following sentence from a personal recount?\n\"After we ... the marathon, we ... water and rested under a tree.\"",
-                options: [
-                    "A. completed - drink",
-                    "B. complete - drank",
-                    "C. had completed - drank",
-                    "D. have completed - drinking",
-                    "E. were completing - drinks"
-                ],
-                answer: "C"
-            },
-            {
-                id: 18,
-                type: 'mcq',
-                passage: `<b>Excerpt from a Factual Report</b><br>
-                Indonesia's rainy season typically begins in November and continues until March. This climate pattern affects planting schedules across the archipelago. For example, farmers in Central Java plant rice in late October to ensure seedlings benefit from early rains. ________ unexpected delays in rainfall due to climate change have disrupted traditional harvest cycles.`,
-                question: "Which conjunction best completes the paragraph to contrast the information?",
-                options: [
-                    "A. Similarly",
-                    "B. However",
-                    "C. Therefore",
-                    "D. In fact",
-                    "E. Next"
-                ],
-                answer: "B"
-            },
-            {
-                id: 19,
-                type: 'mcq',
-                passage: "Original sentence:\n<i>\"The teacher gave a lecture and it was about how we can analyze poetry but she spoke too fast and some students could not follow.\"</i>",
-                question: "Which revision best improves the clarity and sentence flow?",
-                options: [
-                    "A. The teacher gave a fast lecture that no one could follow and it was about poetry analysis.",
-                    "B. Because the teacher spoke too fast, some students didn't understand her lecture about poetry analysis.",
-                    "C. The teacher gave a lecture and spoke too fast and nobody understood the poetry.",
-                    "D. Some students failed to understand the lecture, and it was because the teacher was fast.",
-                    "E. Poetry analysis was discussed but fast, so students didn't understand it."
-                ],
-                answer: "B"
-            },
-            {
-                id: 20,
-                type: 'mcq',
-                passage: "",
-                question: "You are writing an announcement for different audiences. Which sentence is most appropriate for a school newsletter addressed to teachers?",
-                options: [
-                    "A. \"You guys should really come to our open mic night. It's gonna be lit!\"",
-                    "B. \"Students will probably enjoy this, but we're not sure if it will work.\"",
-                    "C. \"We respectfully invite all faculty to support the student-led performance night by attending or volunteering.\"",
-                    "D. \"Make sure to be there! We hope it's good!\"",
-                    "E. \"Yo teachers, this is your chance to chill with us!\""
-                ],
-                answer: "C"
-            },
-            {
-                id: 21,
-                type: 'multi',
-                passage: `<b>Excerpt A:</b><br>
-                Online learning offers flexibility and accessibility to students around the world. It removes barriers related to transportation and location, allowing learners to access quality education from anywhere. However, it can lack interpersonal interaction, which may affect student engagement and mental well-being.<br><br>
-                <b>Excerpt B:</b><br>
-                Although online learning saves time and money, many students feel isolated. Face-to-face learning supports stronger relationships with peers and teachers, which encourages motivation. In contrast, online environments often make collaboration more difficult and feedback less immediate.`,
-                question: "Which of the following statements explain why Excerpt B is more effective than Excerpt A in presenting the topic? (Select all that apply)",
-                options: [
-                    "A. It acknowledges benefits but emphasizes emotional and academic impact.",
-                    "B. It includes personal examples from the writer's own online learning experience.",
-                    "C. It provides a clear contrast between online and face-to-face learning.",
-                    "D. It uses persuasive language to encourage face-to-face learning.",
-                    "E. It focuses only on emotional well-being, not academic factors."
-                ],
-                answer: ["A", "C"]
-            },
-            {
-                id: 22,
-                type: 'multi',
-                passage: `<i>Elina hesitated at the edge of the forest, the sky crackling above with a strange light. "We shouldn't be here," she whispered. But Farhan stepped forward boldly, eyes wide with awe. "Come on. This is exactly where the map pointed."<br>
-                The wind grew erratic, tugging at Elina's scarf, and the trees seemed to lean closer. Something in the air felt ominous, like a warning unspoken.</i>`,
-                question: "Choose the bolded words with their correct definitions. (Select all that apply)",
-                options: [
-                    "A. Awe - a feeling of fear and wonder",
-                    "B. Erratic - calm and predictable behaviour",
-                    "C. Ominous - giving the impression something bad is about to happen",
-                    "D. Erratic - sudden, unpredictable, or inconsistent",
-                    "E. Awe - a mild feeling of boredom or confusion"
-                ],
-                answer: ["A", "C", "D"]
-            },
-            {
-                id: 23,
-                type: 'multi',
-                passage: `Last Saturday, I joined a beach clean-up organized by my school. We arrived at the site at 7 a.m., and the organizers gave us gloves and trash bags. [ [...] ] After three hours, we had collected more than 30 kilograms of plastic waste. Everyone felt proud, and some students even said they wanted to organize another event next month.`,
-                question: "Which of the following would best complete the missing middle sentence in the paragraph? (Select all that apply)",
-                options: [
-                    "A. I forgot to bring a hat, so I borrowed one from a friend.",
-                    "B. We worked in teams, each focusing on a specific area of the beach.",
-                    "C. Cleaning the beach made me feel really tired and grumpy.",
-                    "D. Some students found unusual items like shoes and bicycle tires.",
-                    "E. The weather was extremely hot, but we stayed focused on the task."
-                ],
-                answer: ["B", "D", "E"]
-            },
-            {
-                id: 24,
-                type: 'multi',
-                passage: `<b>Siti:</b> "So, do you think the school should allow phones during class?"<br>
-                <b>Aldo:</b> "Well, I can see why it helps with quick research, but it also distracts a lot of people."<br>
-                <b>Siti:</b> "True, especially during group discussions."<br>
-                <b>Aldo:</b> "Maybe a limited-use policy would work better than banning them entirely."`,
-                question: "What are the main ideas expressed in the dialogue? (Select all that apply)",
-                options: [
-                    "A. Phones should be completely banned in schools.",
-                    "B. Students agree that phones have both benefits and drawbacks.",
-                    "C. The speakers believe phones should only be used during exams.",
-                    "D. One solution is limited phone use, not a full ban.",
-                    "E. The conversation shows students are unsure about phone use."
-                ],
-                answer: ["B", "D"]
-            },
-            {
-                id: 25,
-                type: 'multi',
-                passage: "Refer to the dialogue between Siti and Aldo in Question 24.",
-                question: "Which lines from the dialogue represent polite disagreement or softening disagreement? (Select all that apply)",
-                options: [
-                    "A. \"Well, I can see why it helps with quick research, but...\"",
-                    "B. \"True, especially during group discussions.\"",
-                    "C. \"So, do you think the school should allow phones during class?\"",
-                    "D. \"Maybe a limited-use policy would work better than banning them entirely.\"",
-                    "E. \"It also distracts a lot of people.\""
-                ],
-                answer: ["A", "D"]
-            },
-            {
-                id: 26,
-                type: 'tf_table',
-                passage: `<b>Rina:</b> "You said you were skipping the tree planting, right?"<br>
-                <b>Andi:</b> "Wait, no—I said I couldn't go last week because of the exam. I'm totally coming tomorrow."<br>
-                <b>Rina:</b> (Chuckling) "OH! My bad. I thought you were backing out." (Rina gives a thumbs up and smiles.)`,
-                question: "Based on the dialogue, evaluate the statements regarding the repair of misunderstanding (True or False):",
-                statements: [
-                    { id: 'A', text: "Rina uses a non-verbal gesture to signal resolution and maintain rapport.", answer: 'T' },
-                    { id: 'B', text: "Andi avoids clarification, which escalates the misunderstanding.", answer: 'F' },
-                    { id: 'C', text: "Rina explicitly apologizes, which deepens the miscommunication.", answer: 'F' },
-                    { id: 'D', text: "The misunderstanding is repaired both verbally and non-verbally.", answer: 'T' },
-                    { id: 'E', text: "The repair strategy leads to further conflict later in the story.", answer: 'F' }
-                ]
-            },
-            {
-                id: 27,
-                type: 'tf_table',
-                passage: `<b>Andi (during a group meeting):</b> "Think about it—recycling is like brushing your teeth. You don't do it just once. You do it every day, because it matters. The Earth deserves that much effort, doesn't it?"`,
-                question: "Evaluate the statements regarding Andi's argument (True or False):",
-                statements: [
-                    { id: 'A', text: "Andi uses analogy to link daily recycling to daily personal hygiene.", answer: 'T' },
-                    { id: 'B', text: "The speaker compares recycling to brushing teeth to make it more relatable.", answer: 'T' },
-                    { id: 'C', text: "The argument relies entirely on statistical evidence.", answer: 'F' },
-                    { id: 'D', text: "The comparison helps the audience understand a moral obligation.", answer: 'T' },
-                    { id: 'E', text: "The analogy weakens the argument by making it too abstract.", answer: 'F' }
-                ]
-            },
-            {
-                id: 28,
-                type: 'tf_table',
-                passage: `<b>Morning by the Rice Fields</b><br>
-                The rooster crowed before the sun rose. Wati stepped into her sandals and tiptoed past the room where her grandmother still slept. The air was heavy with dew, and the sound of frogs slowly faded into birdcalls. A narrow path led her through tall banana trees and past a small stream where buffaloes drank. She carried a woven basket, hoping the mangoes hadn't fallen during the night storm.`,
-                question: "Which of the following details help set the rural atmosphere? (True or False):",
-                statements: [
-                    { id: 'A', text: "The presence of banana trees and buffaloes suggests a rural environment.", answer: 'T' },
-                    { id: 'B', text: "The narrator's morning walk includes high-rise buildings and city lights.", answer: 'F' },
-                    { id: 'C', text: "The story takes place at dawn, suggested by the rooster and fading frogs.", answer: 'T' },
-                    { id: 'D', text: "The use of a woven basket reflects traditional, rural daily life.", answer: 'T' },
-                    { id: 'E', text: "The mangoes are described as being sold in a supermarket.", answer: 'F' }
-                ]
-            },
-            {
-                id: 29,
-                type: 'tf_table',
-                passage: `<b>Steps for Making Compost at Home</b><br>
-                1. Collect food scraps such as fruit peels, vegetable ends, and coffee grounds.<br>
-                2. Chop the waste into small pieces.<br>
-                3. Place it in a compost bin with dry materials like leaves or paper.<br>
-                4. Mix the pile regularly to aerate.<br>
-                5. Keep it moist but not wet.<br>
-                6. Wait 2-3 months for decomposition.`,
-                question: "Determine whether the statements reflect the correct logical sequence of the procedure (True or False):",
-                statements: [
-                    { id: 'A', text: "Mixing should be done after combining food scraps and dry materials.", answer: 'T' },
-                    { id: 'B', text: "Decomposition begins before dry materials are added.", answer: 'F' },
-                    { id: 'C', text: "Chopping scraps helps speed up the decomposition process.", answer: 'T' },
-                    { id: 'D', text: "Moisture should be added before placing materials in the bin.", answer: 'F' },
-                    { id: 'E', text: "The last step is to wait several months while regularly monitoring.", answer: 'T' }
-                ]
-            },
-            {
-                id: 30,
-                type: 'tf_table',
-                passage: `<b>Editorial Excerpt:</b><br>
-                "Teenagers are not only the inheritors of a damaged planet—they are now its loudest protectors. From school strikes to innovative community projects, youth have stepped into leadership where policy-makers hesitate. The government must do more than applaud them. It must listen, fund, and follow."`,
-                question: "Determine whether the statements reflect the effectiveness of the editorial's argument (True or False):",
-                statements: [
-                    { id: 'A', text: "The editorial uses emotional language to highlight urgency.", answer: 'T' },
-                    { id: 'B', text: "It presents specific examples of youth action to support the claim.", answer: 'T' },
-                    { id: 'C', text: "The author argues that youth leadership is a temporary trend.", answer: 'F' },
-                    { id: 'D', text: "The conclusion includes a call to action for the government.", answer: 'T' },
-                    { id: 'E', text: "The editorial lacks clarity and relies on vague suggestions.", answer: 'F' }
-                ]
-            },
-            {
-                id: 31,
-                type: 'ai_table',
-                passage: `Rafi was known as a role model in his class. He always submitted assignments early, reminded his friends about deadlines, and constantly advised others to be honest in exams. During the final semester, however, the principal caught him copying from his phone during a literature test. When the news spread, his classmates were shocked. Some even thought it was a prank. Yet Rafi never denied it. He simply handed in his paper and walked out, quietly.`,
-                question: "Evaluate the statements on whether they are Appropriate (A) or Inappropriate (I) in analysing the use of irony:",
-                statements: [
-                    { id: 'A', text: "The irony lies in the contrast between Rafi's public image and private actions.", answer: 'A' },
-                    { id: 'B', text: "The story uses irony to highlight the difficulty of living up to one's reputation.", answer: 'A' },
-                    { id: 'C', text: "The irony weakens the plot, making Rafi an unbelievable character.", answer: 'I' },
-                    { id: 'D', text: "Irony enhances the reader's engagement by creating a twist that challenges assumptions.", answer: 'A' },
-                    { id: 'E', text: "The story lacks irony because Rafi is clearly a dishonest person from the start.", answer: 'I' }
-                ]
-            },
-            {
-                id: 32,
-                type: 'ai_table',
-                passage: `<b>Title: Sports Day is Coming Soon!</b><br>
-                Dear Students, Teachers, and Parents,<br>
-                We're thrilled to announce that our Annual Sports Day will be held on Friday, 10 November 2025, from 8:00 a.m. to 3:00 p.m. on the school grounds...`,
-                question: "Evaluate whether the tone of the sentences is Appropriate (A) or Inappropriate (I) for a formal school newsletter:",
-                statements: [
-                    { id: 'A', text: "\"Bring your water bottles and slap on some sunscreen.\"", answer: 'I' },
-                    { id: 'B', text: "\"The opening ceremony will be led by our beloved Principal, Mr. Heru Santoso.\"", answer: 'A' },
-                    { id: 'C', text: "\"Be there and have fun!\"", answer: 'I' },
-                    { id: 'D', text: "\"Students are expected to join or cheer their classmates enthusiastically.\"", answer: 'A' },
-                    { id: 'E', text: "\"It's going to be an exciting, unforgettable day for everyone involved.\"", answer: 'A' }
-                ]
-            },
-            {
-                id: 33,
-                type: 'ai_table',
-                passage: `<b>Working Together in a Group Project</b><br>
-                Group projects can be both rewarding and challenging. When each member contributes equally, the experience promotes collaboration and accountability. If a student neglects their responsibilities, however, it can affect the overall outcome. In such cases, it is important for that student to receive constructive feedback from their peers...`,
-                question: "Determine if the pronoun usage statements are Appropriate (A) or Inappropriate (I):",
-                statements: [
-                    { id: 'A', text: "Using \"their\" to refer to a singular student is appropriate in modern English.", answer: 'A' },
-                    { id: 'B', text: "The sentence \"they must reflect on the process\" refers clearly to the group.", answer: 'A' },
-                    { id: 'C', text: "\"That student\" helps avoid ambiguity in who needs feedback.", answer: 'A' },
-                    { id: 'D', text: "The use of \"they\" to refer to a singular person causes confusion in this case.", answer: 'I' },
-                    { id: 'E', text: "\"His or her\" should always be used instead of \"their\" to maintain formality.", answer: 'I' }
-                ]
-            },
-            {
-                id: 34,
-                type: 'ai_table',
-                passage: `<b>Slideshow Outline: Technology and Teenagers</b><br>
-                Slide 1: Introduction - Technology's role in teen lives<br>
-                Slide 2: Statistics on social media usage<br>
-                Slide 3: Emotional and mental health effects<br>
-                Slide 4: Expert opinions on screen time<br>
-                Slide 5: Conclusion - Encouraging balanced tech use`,
-                question: "Evaluate the structure-related suggestions as Appropriate (A) or Inappropriate (I):",
-                statements: [
-                    { id: 'A', text: "Starting with expert opinions adds authority but may confuse the audience without context.", answer: 'A' },
-                    { id: 'B', text: "Presenting statistics after expert opinion strengthens logical flow.", answer: 'A' },
-                    { id: 'C', text: "Ending with mental health effects creates a stronger emotional impact before conclusion.", answer: 'A' },
-                    { id: 'D', text: "A logical structure begins with context, followed by evidence and conclusion.", answer: 'A' },
-                    { id: 'E', text: "Skipping the introduction can make the argument more concise.", answer: 'I' }
-                ]
-            },
-            {
-                id: 35,
-                type: 'ai_table',
-                passage: `<b>Compare Paragraphs A - E:</b><br>
-                <b>Paragraph A:</b> Technology has become a major part of education. For example...<br>
-                <b>Paragraph B:</b> Technology is very important. Phones and computers... It's like...<br>
-                <b>Paragraph C:</b> Technology helps... So like...<br>
-                <b>Paragraph D:</b> Schools invest in technology... Consequently...<br>
-                <b>Paragraph E:</b> It's cool how... I mean, like...`,
-                question: "Evaluate whether the characterization of each paragraph is Appropriate (A) or Inappropriate (I):",
-                statements: [
-                    { id: 'A', text: "Paragraph A demonstrates clear transitions and logical progression.", answer: 'A' },
-                    { id: 'B', text: "Paragraph B lacks formal tone and clear linking expressions.", answer: 'A' },
-                    { id: 'C', text: "Paragraph C mixes tone and lacks appropriate transitions.", answer: 'A' },
-                    { id: 'D', text: "Paragraph D uses cohesive devices and relevant references effectively.", answer: 'A' },
-                    { id: 'E', text: "Paragraph E uses vague language and informal phrasing inappropriate for school.", answer: 'A' }
-                ]
-            },
-            {
-                id: 36,
-                type: 'mcq',
-                passage: `<b>More Harm Than Good? Rethinking Competition in Schools</b><br>
-                In many schools across Indonesia and beyond, academic competition is used as a motivational strategy. Honor rolls, class rankings, and achievement boards are often proudly displayed in hallways. Supporters claim that this encourages students to strive harder and reward those who excel. However, others argue that such methods create anxiety, discourage collaboration, and overlook students who improve quietly without recognition...`,
-                question: "What implied message does the article convey about school competition?",
-                options: [
-                    "A. Students must improve quietly even without recognition.",
-                    "B. Competition gives more harm than good.",
-                    "C. Students are no longer motivated by class rankings and achievement boards.",
-                    "D. Students reward shouldn't be just merely for the top ten ranked students.",
-                    "E. School educational goal is not only excellence, but also exclusivity."
-                ],
-                answer: "B"
-            },
-            {
-                id: 37,
-                type: 'multi',
-                passage: "Refer to the article 'More Harm Than Good? Rethinking Competition in Schools' in Question 36.",
-                question: "Evaluate the clarity and coherence of the paragraph. If you were to revise it for a school editorial, what changes would you make? (Select all that apply)",
-                options: [
-                    "A. Give further explanation to the closing \"After all, is our goal excellence or exclusivity?\".",
-                    "B. Give more examples on the term \"helping the enemy\".",
-                    "C. This condition \"Honor rolls, class rankings, and achievement boards are often proudly displayed in hallways\" is no longer relevant. Give argument and proof.",
-                    "D. Change the title into only \"Rethinking Competition in Schools\"",
-                    "E. Honor rolls, class rankings, and achievement boards should not only be displayed in hallways."
-                ],
-                answer: ["A", "C"]
-            },
-            {
-                id: 38,
-                type: 'checkbox_list',
-                passage: `<b>School Debate Transcript</b><br>
-                <b>Topic:</b> Should Exams Be Abolished in Senior High Schools?<br>
-                <b>Speaker 1:</b> Exams don't show what students actually understand. Some students are brilliant but panic during tests. We should have projects and portfolios instead, which show long-term learning.<br>
-                <b>Speaker 2:</b> Exams are still necessary to measure learning in a standard, fair way. Not all subjects can be assessed through projects. What matters is how the exams are designed, not whether they exist.`,
-                question: "Check (✓) the correct statements based on the debate transcript:",
-                options: [
-                    "Speaker 1 is for exam, while Speaker 2 is against exam.",
-                    "The argument 'some students are brilliant but panic during tests' is relevant.",
-                    "The argument 'exams are still necessary to measure learning in a standard' is irrelevant.",
-                    "The argument 'students should have projects and portfolios rather than exam' is irrelevant because projects can't have exact points.",
-                    "The conclusion 'What matters is how the exams are designed, not whether they exist' is on point."
-                ],
-                answer: [1, 4] // 0-based index corresponding to statements 2 & 5
-            },
-            {
-                id: 39,
-                type: 'mcq',
-                passage: `<b>Paragraph A:</b> Banning social media in schools is necessary. It distracts students during lessons, encourages superficial interactions, and increases the risk of cyberbullying. Schools should protect students by blocking access to these platforms entirely.<br><br>
-                <b>Paragraph B:</b> Banning social media is too extreme. Instead of forbidding its use, schools should teach students digital responsibility. Social media can be useful for announcements, student-led campaigns, and even collaborative research.`,
-                question: "What conclusion can you draw about the use of social media in schools?",
-                options: [
-                    "A. Social media must be banned in schools.",
-                    "B. Students should be made digitally responsible.",
-                    "C. Social media ban is to protect students.",
-                    "D. Social media is only useful for announcements, student-led campaigns, and collaborative research.",
-                    "E. The school must be responsible for lessons distract and cyberbullying."
-                ],
-                answer: "B"
-            },
-            {
-                id: 40,
-                type: 'checkbox_list',
-                passage: "Refer to Paragraph A in Question 39.",
-                question: "The following are rewritten sentences from Paragraph A to improve grammar, word choice, and tone for formal writing. Check (✓) the correct ones:",
-                options: [
-                    "To safeguard students, schools ought to completely restrict access to these platforms.",
-                    "Banning social media in school is not wise.",
-                    "The utilisation of social media poses significant concerns, including distraction during instructional periods, promotion of superficial interactions, and an elevated risk of cyberbullying incidents.",
-                    "Social media can be helpful for sharing information, supporting good causes, and working together on projects.",
-                    "Other than forbidding its use, schools should include lesson hours to teach digital responsibility."
-                ],
-                answer: [0, 2] // 0-based index corresponding to option 1 & 3
+                answer: 0
             }
         ];
 
-        // State Management
-        let currentIndex = 0;
-        let userAnswers = {}; // { qId: answerValue }
-        let flagged = {}; // { qId: boolean }
-        let fontSizeLevel = 0; // -1, 0, 1
-        let timerSeconds = 180 * 60; // 3 hours
+        // State Variables
+        let currentUser = {
+            name: '',
+            class: ''
+        };
+        let currentQuestionIndex = 0;
+        let userAnswers = {};
+        let timerInterval = null;
+        let timeRemaining = 15 * 60; // 15 Minutes in seconds
 
-        // Timer initialization
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const nameInput = document.getElementById('student-name').value.trim();
+            const classInput = document.getElementById('student-class').value;
+            const errorDiv = document.getElementById('login-error');
+
+            if (!nameInput || !classInput) {
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            errorDiv.classList.add('hidden');
+            
+            // Save User Info
+            currentUser.name = nameInput;
+            currentUser.class = classInput;
+
+            // Update UI Header Badge
+            document.getElementById('display-name').innerText = currentUser.name;
+            document.getElementById('display-class').innerText = 'Kelas: ' + currentUser.class;
+            document.getElementById('student-badge').classList.remove('hidden');
+
+            // Switch Screen
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('quiz-section').classList.remove('hidden');
+
+            // Start Quiz
+            initQuiz();
+        }
+
+        function initQuiz() {
+            currentQuestionIndex = 0;
+            userAnswers = {};
+            timeRemaining = 15 * 60;
+            startTimer();
+            renderQuestion();
+        }
+
         function startTimer() {
-            const timerEl = document.getElementById('timer');
-            const interval = setInterval(() => {
-                if (timerSeconds <= 0) {
-                    clearInterval(interval);
-                    calculateAndShowResult();
-                    return;
+            clearInterval(timerInterval);
+            updateTimerDisplay();
+            
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    finishQuiz();
                 }
-                timerSeconds--;
-                const h = String(Math.floor(timerSeconds / 3600)).padStart(2, '0');
-                const m = String(Math.floor((timerSeconds % 3600) / 60)).padStart(2, '0');
-                const s = String(timerSeconds % 60).padStart(2, '0');
-                timerEl.textContent = `${h}:${m}:${s}`;
             }, 1000);
         }
 
-        // Render Sidebar Navigation Grid
-        function renderNavigationGrid() {
-            const grid = document.getElementById('number-grid');
-            grid.innerHTML = '';
-
-            questionsData.forEach((q, idx) => {
-                const btn = document.createElement('button');
-                btn.textContent = q.id;
-                
-                let classNames = 'w-10 h-10 font-bold rounded border transition text-sm flex items-center justify-center relative ';
-                
-                const isAnswered = userAnswers[q.id] !== undefined && userAnswers[q.id] !== null && 
-                    (Array.isArray(userAnswers[q.id]) ? userAnswers[q.id].length > 0 : true) &&
-                    (typeof userAnswers[q.id] === 'object' && !Array.isArray(userAnswers[q.id]) ? Object.keys(userAnswers[q.id]).length > 0 : true);
-                
-                const isFlagged = flagged[q.id];
-
-                if (isFlagged) {
-                    classNames += 'bg-yellow-400 text-gray-900 border-yellow-500 ';
-                } else if (isAnswered) {
-                    classNames += 'bg-green-600 text-white border-green-700 ';
-                } else {
-                    classNames += 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100 ';
-                }
-
-                if (idx === currentIndex) {
-                    classNames += 'ring-2 ring-cbt-accent ring-offset-1 font-extrabold ';
-                }
-
-                btn.className = classNames;
-                btn.onclick = () => jumpToQuestion(idx);
-                grid.appendChild(btn);
-            });
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timer-display').innerText = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
 
-        // Font Adjuster
-        function changeFontSize(level) {
-            fontSizeLevel = level;
-            const container = document.getElementById('question-container');
-            container.classList.remove('text-sm', 'text-base', 'text-lg');
-            if (level === -1) container.classList.add('text-sm');
-            else if (level === 0) container.classList.add('text-base');
-            else if (level === 1) container.classList.add('text-lg');
-        }
+        function renderQuestion() {
+            const q = sampleQuestions[currentQuestionIndex];
+            const totalQuestions = sampleQuestions.length;
 
-        // Load Question View
-        function loadQuestion(index) {
-            currentIndex = index;
-            const q = questionsData[index];
+            // Update Progress Header
+            document.getElementById('current-question-num').innerText = `${currentQuestionIndex + 1} / ${totalQuestions}`;
+            const progressPercent = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
 
-            document.getElementById('q-number').textContent = q.id;
-            document.getElementById('flag-checkbox').checked = !!flagged[q.id];
+            // Question Text
+            document.getElementById('question-text').innerText = `${currentQuestionIndex + 1}. ${q.question}`;
 
-            const container = document.getElementById('question-container');
-            let html = '';
+            // Render Options
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
 
-            // Render Passage
-            if (q.passage) {
-                html += `<div class="bg-blue-50/50 p-4 rounded-lg border border-blue-100 mb-4">${q.passage}</div>`;
-            }
+            const optionLabels = ['A', 'B', 'C', 'D'];
 
-            // Render Image
-            if (q.image) {
-                html += q.image;
-            }
+            q.options.forEach((opt, index) => {
+                const isSelected = userAnswers[currentQuestionIndex] === index;
+                
+                const optionBtn = document.createElement('button');
+                optionBtn.type = 'button';
+                optionBtn.onclick = () => selectOption(index);
+                optionBtn.className = `w-full text-left p-3.5 sm:p-4 rounded-xl border transition-all flex items-start space-x-3 cursor-pointer ${
+                    isSelected 
+                        ? 'bg-indigo-50 border-indigo-600 text-indigo-900 font-medium ring-2 ring-indigo-500/20' 
+                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100 hover:border-slate-300'
+                }`;
 
-            // Render Question Text
-            html += `<div class="font-bold text-gray-800 mb-4">${q.question.replace(/\n/g, '<br>')}</div>`;
-
-            // Render Input Controls according to type
-            html += `<div class="space-y-2 mt-4">`;
-
-            if (q.type === 'mcq') {
-                q.options.forEach(opt => {
-                    const optKey = opt.charAt(0);
-                    const isChecked = userAnswers[q.id] === optKey;
-                    html += `
-                        <label class="flex items-start space-x-3 p-3 rounded-lg border cursor-pointer hover:bg-gray-50 transition ${isChecked ? 'bg-blue-50 border-cbt-accent text-blue-900 font-medium' : 'border-gray-200'}">
-                            <input type="radio" name="q_${q.id}" value="${optKey}" ${isChecked ? 'checked' : ''} onchange="saveAnswer('${q.id}', '${optKey}')" class="mt-1 text-cbt-accent focus:ring-cbt-accent">
-                            <span class="flex-1">${opt}</span>
-                        </label>
-                    `;
-                });
-            } else if (q.type === 'multi') {
-                const currentAns = userAnswers[q.id] || [];
-                q.options.forEach(opt => {
-                    const optKey = opt.charAt(0);
-                    const isChecked = currentAns.includes(optKey);
-                    html += `
-                        <label class="flex items-start space-x-3 p-3 rounded-lg border cursor-pointer hover:bg-gray-50 transition ${isChecked ? 'bg-blue-50 border-cbt-accent text-blue-900 font-medium' : 'border-gray-200'}">
-                            <input type="checkbox" value="${optKey}" ${isChecked ? 'checked' : ''} onchange="saveMultiAnswer('${q.id}', '${optKey}')" class="mt-1 text-cbt-accent rounded focus:ring-cbt-accent">
-                            <span class="flex-1">${opt}</span>
-                        </label>
-                    `;
-                });
-            } else if (q.type === 'checkbox_list') {
-                const currentAns = userAnswers[q.id] || [];
-                q.options.forEach((opt, idx) => {
-                    const isChecked = currentAns.includes(idx);
-                    html += `
-                        <label class="flex items-start space-x-3 p-3 rounded-lg border cursor-pointer hover:bg-gray-50 transition ${isChecked ? 'bg-blue-50 border-cbt-accent text-blue-900 font-medium' : 'border-gray-200'}">
-                            <input type="checkbox" value="${idx}" ${isChecked ? 'checked' : ''} onchange="saveCheckboxListAnswer('${q.id}', ${idx})" class="mt-1 text-cbt-accent rounded focus:ring-cbt-accent">
-                            <span class="flex-1">☐ ${opt}</span>
-                        </label>
-                    `;
-                });
-            } else if (q.type === 'tf_table' || q.type === 'ai_table') {
-                const labels = q.type === 'tf_table' ? ['TRUE (T)', 'FALSE (F)'] : ['APPROPRIATE (A)', 'INAPPROPRIATE (I)'];
-                const valTrue = q.type === 'tf_table' ? 'T' : 'A';
-                const valFalse = q.type === 'tf_table' ? 'F' : 'I';
-                const currentAns = userAnswers[q.id] || {};
-
-                html += `
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse border border-gray-300 text-sm">
-                            <thead>
-                                <tr class="bg-gray-100">
-                                    <th class="border border-gray-300 p-2 text-left">Pernyataan</th>
-                                    <th class="border border-gray-300 p-2 w-28 text-center">${labels[0]}</th>
-                                    <th class="border border-gray-300 p-2 w-28 text-center">${labels[1]}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                optionBtn.innerHTML = `
+                    <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg text-xs font-bold shrink-0 ${
+                        isSelected ? 'bg-indigo-600 text-white' : 'bg-white border border-slate-300 text-slate-600'
+                    }">${optionLabels[index]}</span>
+                    <span class="text-sm leading-relaxed pt-0.5">${opt}</span>
                 `;
 
-                q.statements.forEach(st => {
-                    const selected = currentAns[st.id];
-                    html += `
-                        <tr>
-                            <td class="border border-gray-300 p-2 font-normal">${st.id}. ${st.text}</td>
-                            <td class="border border-gray-300 p-2 text-center bg-gray-50">
-                                <input type="radio" name="st_${q.id}_${st.id}" value="${valTrue}" ${selected === valTrue ? 'checked' : ''} onchange="saveTableAnswer('${q.id}', '${st.id}', '${valTrue}')" class="text-cbt-accent">
-                            </td>
-                            <td class="border border-gray-300 p-2 text-center bg-gray-50">
-                                <input type="radio" name="st_${q.id}_${st.id}" value="${valFalse}" ${selected === valFalse ? 'checked' : ''} onchange="saveTableAnswer('${q.id}', '${st.id}', '${valFalse}')" class="text-cbt-accent">
-                            </td>
-                        </tr>
-                    `;
-                });
+                optionsContainer.appendChild(optionBtn);
+            });
 
-                html += `</tbody></table></div>`;
-            }
+            // Update Navigation Buttons
+            const btnPrev = document.getElementById('btn-prev');
+            btnPrev.disabled = currentQuestionIndex === 0;
 
-            html += `</div>`;
-            container.innerHTML = html;
+            const btnNextText = document.getElementById('btn-next-text');
+            const btnNextIcon = document.getElementById('btn-next-icon');
 
-            // Nav buttons update
-            document.getElementById('btn-prev').disabled = index === 0;
-            if (index === questionsData.length - 1) {
-                document.getElementById('btn-next').classList.add('hidden');
-                document.getElementById('btn-finish').classList.remove('hidden');
+            if (currentQuestionIndex === totalQuestions - 1) {
+                btnNextText.innerText = "Selesai Tes";
+                btnNextIcon.className = "fa-solid fa-check text-xs";
             } else {
-                document.getElementById('btn-next').classList.remove('hidden');
-                document.getElementById('btn-finish').classList.add('hidden');
-            }
-
-            renderNavigationGrid();
-        }
-
-        // Answer Saving Helpers
-        function saveAnswer(qId, value) {
-            userAnswers[qId] = value;
-            renderNavigationGrid();
-        }
-
-        function saveMultiAnswer(qId, optionKey) {
-            if (!userAnswers[qId]) userAnswers[qId] = [];
-            const idx = userAnswers[qId].indexOf(optionKey);
-            if (idx > -1) {
-                userAnswers[qId].splice(idx, 1);
-            } else {
-                userAnswers[qId].push(optionKey);
-            }
-            renderNavigationGrid();
-        }
-
-        function saveCheckboxListAnswer(qId, index) {
-            if (!userAnswers[qId]) userAnswers[qId] = [];
-            const idx = userAnswers[qId].indexOf(index);
-            if (idx > -1) {
-                userAnswers[qId].splice(idx, 1);
-            } else {
-                userAnswers[qId].push(index);
-            }
-            renderNavigationGrid();
-        }
-
-        function saveTableAnswer(qId, stId, value) {
-            if (!userAnswers[qId]) userAnswers[qId] = {};
-            userAnswers[qId][stId] = value;
-            renderNavigationGrid();
-        }
-
-        function toggleFlag() {
-            const currentQ = questionsData[currentIndex];
-            flagged[currentQ.id] = document.getElementById('flag-checkbox').checked;
-            renderNavigationGrid();
-        }
-
-        function navigate(direction) {
-            const target = currentIndex + direction;
-            if (target >= 0 && target < questionsData.length) {
-                loadQuestion(target);
+                btnNextText.innerText = "Selanjutnya";
+                btnNextIcon.className = "fa-solid fa-arrow-right text-xs";
             }
         }
 
-        function jumpToQuestion(index) {
-            loadQuestion(index);
+        function selectOption(index) {
+            userAnswers[currentQuestionIndex] = index;
+            renderQuestion();
         }
 
-        // Confirm Finish
-        function confirmFinish() {
-            let answeredCount = 0;
-            questionsData.forEach(q => {
-                const ans = userAnswers[q.id];
-                if (ans !== undefined && ans !== null) {
-                    if (Array.isArray(ans) && ans.length > 0) answeredCount++;
-                    else if (typeof ans === 'object' && !Array.isArray(ans) && Object.keys(ans).length > 0) answeredCount++;
-                    else if (typeof ans === 'string') answeredCount++;
+        function navigateQuestion(direction) {
+            const totalQuestions = sampleQuestions.length;
+
+            if (direction === 1 && currentQuestionIndex === totalQuestions - 1) {
+                // Submit Quiz
+                finishQuiz();
+                return;
+            }
+
+            const nextIndex = currentQuestionIndex + direction;
+            if (nextIndex >= 0 && nextIndex < totalQuestions) {
+                currentQuestionIndex = nextIndex;
+                renderQuestion();
+            }
+        }
+
+        function finishQuiz() {
+            clearInterval(timerInterval);
+
+            let correct = 0;
+            sampleQuestions.forEach((q, index) => {
+                if (userAnswers[index] === q.answer) {
+                    correct++;
                 }
             });
 
-            document.getElementById('modal-summary').innerHTML = `
-                <div>• Total Soal: <b>${questionsData.length}</b></div>
-                <div>• Sudah Dijawab: <b>${answeredCount}</b></div>
-                <div>• Belum Dijawab: <b>${questionsData.length - answeredCount}</b></div>
-            `;
-            document.getElementById('finish-modal').classList.remove('hidden');
-            document.getElementById('finish-modal').classList.add('flex');
+            const total = sampleQuestions.length;
+            const wrong = total - correct;
+            const score = Math.round((correct / total) * 100);
+
+            // Populate Result
+            document.getElementById('result-student-name').innerText = currentUser.name;
+            document.getElementById('result-student-class').innerText = `Kelas: ${currentUser.class}`;
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('correct-count').innerText = correct;
+            document.getElementById('wrong-count').innerText = wrong;
+
+            // Display Result Screen
+            document.getElementById('quiz-section').classList.add('hidden');
+            document.getElementById('result-section').classList.remove('hidden');
         }
 
-        function closeModal() {
-            document.getElementById('finish-modal').classList.add('hidden');
-            document.getElementById('finish-modal').classList.remove('flex');
+        function restartQuiz() {
+            document.getElementById('result-section').classList.add('hidden');
+            document.getElementById('login-section').classList.remove('hidden');
+            document.getElementById('login-form').reset();
+            document.getElementById('student-badge').classList.add('hidden');
         }
-
-        // Score Calculation
-        function calculateAndShowResult() {
-            closeModal();
-            let correctCount = 0;
-            const detailsContainer = document.getElementById('result-details');
-            detailsContainer.innerHTML = '';
-
-            questionsData.forEach(q => {
-                let isCorrect = false;
-                const userAns = userAnswers[q.id];
-
-                if (q.type === 'mcq') {
-                    isCorrect = userAns === q.answer;
-                } else if (q.type === 'multi') {
-                    if (Array.isArray(userAns)) {
-                        const sortedUser = [...userAns].sort().join('');
-                        const sortedKey = [...q.answer].sort().join('');
-                        isCorrect = sortedUser === sortedKey;
-                    }
-                } else if (q.type === 'checkbox_list') {
-                    if (Array.isArray(userAns)) {
-                        const sortedUser = [...userAns].sort().join('');
-                        const sortedKey = [...q.answer].sort().join('');
-                        isCorrect = sortedUser === sortedKey;
-                    }
-                } else if (q.type === 'tf_table' || q.type === 'ai_table') {
-                    if (userAns && typeof userAns === 'object') {
-                        let allMatch = true;
-                        q.statements.forEach(st => {
-                            if (userAns[st.id] !== st.answer) allMatch = false;
-                        });
-                        isCorrect = allMatch;
-                    }
-                }
-
-                if (isCorrect) correctCount++;
-
-                const row = document.createElement('div');
-                row.className = `p-3 flex items-center justify-between ${isCorrect ? 'bg-green-50' : 'bg-red-50'}`;
-                row.innerHTML = `
-                    <div>
-                        <span class="font-bold">Soal ${q.id}:</span> 
-                        <span class="text-xs text-gray-600">${q.question.substring(0, 60)}...</span>
-                    </div>
-                    <div>
-                        ${isCorrect 
-                            ? '<span class="px-2 py-1 bg-green-200 text-green-800 text-xs font-bold rounded">BENAR</span>' 
-                            : '<span class="px-2 py-1 bg-red-200 text-red-800 text-xs font-bold rounded">SALAH</span>'}
-                    </div>
-                `;
-                detailsContainer.appendChild(row);
-            });
-
-            const totalScore = Math.round((correctCount / questionsData.length) * 100);
-
-            document.getElementById('score-val').textContent = totalScore;
-            document.getElementById('correct-count').textContent = correctCount;
-            document.getElementById('wrong-count').textContent = questionsData.length - correctCount;
-
-            document.getElementById('result-modal').classList.remove('hidden');
-            document.getElementById('result-modal').classList.add('flex');
-        }
-
-        // Initialize App
-        window.onload = () => {
-            loadQuestion(0);
-            startTimer();
-        };
     </script>
 </body>
 </html>
-```eof
-
-### Deskripsi Aplikasi CBT:
-1. **Antarmuka CBT Profesional**: Didesain dengan standar tampilan Computer-Based Test (seperti ANBK/UBKD) yang memiliki header informasi waktu, ukuran font dinamis ($A-$, $A$, $A+$), penanda status ragu-ragu, dan navigasi nomor soal interaktif.
-2. **Visualisasi Gambar Sesuai Soal**:
-   - **Soal 1 & 2**: Dilengkapi grafik batang *Student Motivation by Passion Project Type*.
-   - **Soal 9 & 10**: Dilengkapi grafik horizontal *Teen Mental Health in Indonesia (2024)*.
-   - **Soal 15**: Dilengkapi diagram poster digital *Teenage Mental Health App*.
-3. **Mendukung Berbagai Tipe Soal**:
-   - Pilihan Ganda Tunggal (MCQ)
-   - Pilihan Ganda Kompleks / Multi-Select
-   - Tabel Isian Benar/Salah ($T/F$) atau Sesuai/Tidak Sesuai ($A/I$)
-   - Checkbox List
-4. **Analisis Hasil**: Setelah menekan tombol "Selesai Ujian", sistem akan menghitung skor akhir (skala 0–100) serta menampilkan rincian jawaban benar/salah pada setiap nomor.
